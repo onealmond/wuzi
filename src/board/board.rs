@@ -26,9 +26,9 @@ pub struct Slot {
 }
 
 struct Score {
-    rows: Vec<u32>,
-    slots: Vec<u32>,
-    diagonals: Vec<u32>,
+    rows: Vec<u8>,
+    columns: Vec<u8>,
+    diagonals: Vec<u8>,
 }
 
 pub struct Board {
@@ -40,11 +40,11 @@ impl Score {
     pub fn new() -> Score {
         let mut score = Score{
             rows: Vec::new(),
-            slots: Vec::new(),
+            columns: Vec::new(),
             diagonals: Vec::new(),
         };
         score.rows.resize(MAX_BULLETS, 0);
-        score.slots.resize(MAX_BULLETS, 0);
+        score.columns.resize(MAX_BULLETS, 0);
         score.diagonals.resize(2, 0);
         return score;
     }
@@ -141,7 +141,7 @@ impl Board {
         self.board[slot.index].push(*color);
         let row = self.board[slot.index].len()-1;
         self.get_mut_scores(color).rows[row] |= 1 << slot.index;
-        self.get_mut_scores(color).slots[slot.index] |= 1 << row;
+        self.get_mut_scores(color).columns[slot.index] |= 1 << row;
 
         if row == slot.index {
             self.get_mut_scores(&color).diagonals[0] |= 1 << slot.index;
@@ -156,19 +156,19 @@ impl Board {
 
     pub fn is_winner(&mut self, color: &Color) -> bool {
         for i in &self.get_mut_scores(color).rows {
-            if i == &0x1fu32 {
+            if i == &0x1fu8 {
                 return true;
             }
         }
 
-        for i in &self.get_mut_scores(color).slots {
-            if i == &0x1fu32 {
+        for i in &self.get_mut_scores(color).columns {
+            if i == &0x1fu8 {
                 return true;
             }
         }
 
         for i in &self.get_mut_scores(color).diagonals {
-            if i == &0x1fu32 {
+            if i == &0x1fu8 {
                 return true;
             }
         }
